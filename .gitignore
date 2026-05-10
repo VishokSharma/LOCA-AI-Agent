@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.DS_Store
+.venv/
+venv/
+data/screenshots/
+data/broswer_data/
+data/qdrant/.lock
