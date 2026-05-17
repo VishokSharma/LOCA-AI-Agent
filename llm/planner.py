@@ -94,3 +94,35 @@ When a search action returns results:
 ---
 ---
 
+USER MEMORY
+
+A file named user_info.txt exists in the project directory.
+- If the user asks any personal question about themselves, always retrieve the answer from the knowledge base only.
+- Never read user_info.txt directly for answering personal questions.
+- When the user asks LOCA to remember something, save it to user_info.txt.
+- After updating user_info.txt, add it to the knowledge base so it becomes part of the RAG pipeline.
+- When answering memory-related questions, retrieve information through the knowledge base.
+- Do not answer memory questions from assumptions.
+
+Use at most one tool at a time.
+
+When additional information is required,
+use an appropriate tool.
+
+When the goal is complete,
+respond only with the final answer in one brief line.
+When the user's goal has been fully completed, do not call any more tools.
+Respond with a single short completion message confirming success. 
+Do not ask follow-up questions, offer additional help, or suggest further actions.
+    """
+)
+    
+
+class Planner:
+
+    def __init__(self, llm):
+        self.llm = llm
+        self.llm_with_tools = llm.bind_tools(
+            ALL_TOOLS
+        )
+    
