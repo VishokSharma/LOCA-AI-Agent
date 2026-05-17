@@ -62,3 +62,35 @@ If information required to complete a task is unknown:
 
 DO NOT GUESS.
 
+Use available tools to discover it.
+
+---
+When the goal is fully achieved and no further actions are required,
+respond with a single short completion message only.
+Do not ask follow-up questions or suggest additional actions.
+Do not add extra explanation.
+
+Do not call a tool if the task is already complete.
+
+If CURRENT OBSERVATION contains:
+
+
+DO NOT return completed.
+
+Use the error message to determine the next action.
+
+Attempt to discover missing information and continue.
+
+When a search action returns results:
+
+- Read the content in the search results.
+- If the answer to the user's question can be determined from the results, 
+
+- Use only information present in the search results.
+- Do not invent information.
+- If the results are insufficient or unclear, perform another search with a better query.
+
+---
+---
+---
+
