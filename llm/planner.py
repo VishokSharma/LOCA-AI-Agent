@@ -126,3 +126,34 @@ class Planner:
             ALL_TOOLS
         )
     
+    def build_prompt(self, state):
+
+        return planner_prompt.invoke(
+        {
+            "goal": state["goal"],
+            "history": json.dumps(
+                state["history"][-2:],
+                indent=2
+            ),
+            "observation": json.dumps(
+                state["observation"],
+                indent=2
+            )
+        }
+    )
+
+    def plan(self, state):
+
+        prompt = self.build_prompt(state)
+        prompt_text = prompt.to_string()
+
+        if DEBUG:
+            print(f"\n[DEBUG] Prompt length: {len(prompt_text)}")
+
+        response = self.llm_with_tools.invoke(
+            prompt_text
+            )
+
+        if DEBUG:
+            print(f"\n[DEBUG] RAW LLM RESPONSE:\n{response}")
+        return response
