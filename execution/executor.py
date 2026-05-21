@@ -35,3 +35,21 @@ class Executor:
 
             print("\n[EXECUTOR]")
             print(f"Tool: {tool_name}")
+            print(f"Args: {args}")
+
+        if tool_name not in self.tool_map:
+
+            raise ValueError(
+                f"Tool '{tool_name}' not registered"
+            )
+
+        tool = self.tool_map[tool_name]
+
+        result = tool.invoke(args)
+
+        if DEBUG:
+
+            print("\n[TOOL RESULT]")
+            print(result)
+
+        return result
