@@ -63,3 +63,67 @@ graph TD
     end
 
     subgraph RAG
+        KnowledgeTool --> Chunker["rag/chunker.py · Chunker"]
+        KnowledgeTool --> Embedder["rag/embedder.py · Embedder"]
+        KnowledgeTool --> QdrantManager["rag/qdrant_manager.py · QdrantManager"]
+    end
+
+    subgraph Voice
+        VoiceManager --> Recorder["voice/recorder.py · Recorder"]
+        VoiceManager --> STT["voice/stt.py · SpeechToText"]
+        VoiceManager --> TTS["voice/tts.py · TextToSpeech"]
+        VoiceManager --> Player["voice/player.py · AudioPlayer"]
+    end
+
+    ObserveNode --> BrowserTool
+    ObserveNode --> DesktopTool
+    LOCAGraph --> Output["Final state / spoken response"]
+```
+
+---
+
+## Agent Flow
+
+```mermaid
+flowchart TD
+    A([User]) --> B["main.py · get_goal()"]
+
+    B -->|mode = 1| C["input() — keyboard"]
+    B -->|mode = 2| D["VoiceManager.listen()"]
+    D --> D1["Recorder.record()"]
+    D1 --> D2["SpeechToText.transcribe()"]
+
+    C --> Goal["goal: str"]
+    D2 --> Goal
+
+    Goal --> Run["LOCAGraph.run(goal)"]
+    Run --> Plan["planner_node → Planner.plan(state)"]
+    Plan --> LLM["ChatGroq — tool-bound inference"]
+    LLM --> Resp["LLM response\n(content + tool_calls)"]
+
+    Resp -->|has tool_calls| Exec["Executor.execute(response)"]
+    Exec --> Invoke["LangChain tool.invoke()"]
+    Invoke --> ToolImpl["BrowserTool / DesktopTool / FileSystemTool\nSearchTool / KnowledgeTool"]
+    ToolImpl --> Obs["observe_node — refresh browser/desktop state"]
+    Obs --> State["GraphState: history + observation + step_count"]
+    State --> Plan
+
+    Resp -->|no tool_calls| Done["Task complete"]
+    Done --> Speak["speak_final_completion()"]
+    Speak --> TTS["VoiceManager.speak(text)"]
+    TTS --> Audio["AudioPlayer.play() → spoken output"]
+    Audio --> A
+```
+
+---
+
+## Tech Stack
+
+| Layer | Technology | Version | Purpose |
+|-------|-----------|---------|---------|
+| Runtime | Python, venv | 3.12.1 | Local execution environment |
+| Orchestration | LangGraph | 1.2.6 | State-machine: plan → execute → observe |
+| LLM | LangChain + Groq | latest | Tool-bound planning via Groq chat models |
+| Browser | Playwright | 1.60.0 | Persistent Chromium automation and DOM observation |
+| Desktop | pyautogui, pygetwindow, pywinauto, pywin32 | — | Window management, typing, hotkeys (Windows only) |
+| Filesystem | pathlib, os | stdlib | Local file discovery and mutation |
