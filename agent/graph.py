@@ -34,3 +34,38 @@ class LocaGraph:
         builder.add_node(
             "tool",
             self.tool_node
+        )
+
+        builder.add_node(
+            "observe",
+            self.observe_node
+        )
+
+        builder.set_entry_point(
+            "planner"
+        )
+
+        builder.add_conditional_edges(
+            "planner",
+            self.should_continue,
+            {
+                "tool": "tool",
+                "end": END
+            }
+        )
+
+        builder.add_edge(
+            "tool",
+            "observe"
+        )
+
+        builder.add_edge(
+            "observe",
+            "planner"
+        )
+
+        self.graph = builder.compile()
+
+    def planner_node(
+        self,
+        state: GraphState
