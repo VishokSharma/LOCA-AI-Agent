@@ -69,3 +69,38 @@ class LocaGraph:
     def planner_node(
         self,
         state: GraphState
+    ):
+
+        response = self.planner.plan(
+            state
+        )
+
+        print("\n[PLANNER CONTENT]")
+        print(response.content)
+
+        print("\n[PLANNER TOOL CALLS]")
+        print(response.tool_calls)
+
+        return {
+            "response": response
+        }
+
+    def should_continue(
+        self,
+        state: GraphState
+    ):
+
+        response = state["response"]
+
+        if not response.tool_calls:
+
+            print("\n[TASK COMPLETED]")
+
+            if response.content:
+                print(response.content)
+
+            return "end"
+
+        return "tool"
+
+    def tool_node(
