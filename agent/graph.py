@@ -104,3 +104,38 @@ class LocaGraph:
         return "tool"
 
     def tool_node(
+        self,
+        state: GraphState
+    ):
+
+        response = state["response"]
+
+        result = self.executor.execute(
+            response
+        )
+
+        print("\n[TOOL RESULT]")
+        print(result)
+
+        return {
+            "result": result
+        }
+
+    def observe_node(
+        self,
+        state: GraphState
+    ):
+
+        response = state["response"]
+
+        tool_name = (
+            response.tool_calls[0]["name"]
+        )
+        print(tool_name)
+        result = state["result"]
+
+        try:
+
+            if tool_name.startswith(
+                "browser_"
+            ):
