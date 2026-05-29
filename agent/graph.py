@@ -174,3 +174,38 @@ class LocaGraph:
 
         history = list(
             state["history"]
+        )
+
+        history.append(
+            {
+                "tool": tool_name,
+                "args": response.tool_calls[0]["args"],
+                "result": result
+            }
+        )
+
+        print("\n[OBSERVATION]")
+        print(observation)
+
+        return {
+            "observation": observation,
+            "history": history[-10:],
+            "step_count":
+                state["step_count"] + 1
+        }
+
+    def run(
+        self,
+        goal: str
+    ):
+
+        return self.graph.invoke(
+            {
+                "goal": goal,
+                "history": [],
+                "observation": {},
+                "step_count": 0,
+                "response": None,
+                "result": None
+            }
+        )
