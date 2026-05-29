@@ -139,3 +139,38 @@ class LocaGraph:
             if tool_name.startswith(
                 "browser_"
             ):
+
+                observation = (
+                    self.tools["browser"].observe()
+                )
+
+            elif tool_name in [
+                "open_app",
+                "switch_window",
+                "type_text",
+                "press_key"
+            ]:
+
+                if hasattr(
+                    self.tools["desktop"],
+                    "observe"
+                ):
+
+                    observation = (
+                        self.tools["desktop"]
+                        .observe()
+                    )
+
+                else:
+                    observation = result
+
+            else:
+
+                observation = result
+
+        except Exception:
+
+            observation = result
+
+        history = list(
+            state["history"]
