@@ -76,3 +76,29 @@ class AgentLoop:
 
             observation = result
 
+            state.observation = observation
+
+            state.history.append(
+                {
+                    "tool_calls": response.tool_calls,
+                    "content": response.content
+                }
+            )
+
+            state.step_count += 1
+
+            if DEBUG:
+
+                print("\n[OBSERVATION]")
+                print(observation)
+
+            # ==================================================
+            # SAFETY LIMIT
+            # ==================================================
+
+            if state.step_count >= 20:
+
+                print("\n[ERROR]")
+                print("Max steps reached")
+
+                break
