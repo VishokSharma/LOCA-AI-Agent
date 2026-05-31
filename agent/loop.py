@@ -50,3 +50,29 @@ class AgentLoop:
                 print(response.content)
 
                 break
+
+            try:
+
+                result = self.executor.execute(
+                    response
+                )
+
+            except Exception as e:
+
+                print(f"\n[ERROR]\n{str(e)}")
+
+                if DEBUG:
+
+                    import traceback
+                    traceback.print_exc()
+
+                continue
+
+            time.sleep(2)
+
+            # ==================================================
+            # OBSERVATION
+            # ==================================================
+
+            observation = result
+
