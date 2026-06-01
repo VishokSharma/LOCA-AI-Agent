@@ -127,3 +127,67 @@ flowchart TD
 | Browser | Playwright | 1.60.0 | Persistent Chromium automation and DOM observation |
 | Desktop | pyautogui, pygetwindow, pywinauto, pywin32 | — | Window management, typing, hotkeys (Windows only) |
 | Filesystem | pathlib, os | stdlib | Local file discovery and mutation |
+| Web search | tavily-python | — | Online search fallback |
+| Knowledge base | qdrant-client, ollama, numpy, scipy | — | Chunk → embed → store → retrieve local docs |
+| Voice I/O | deepgram-sdk, sounddevice, pygame | — | Mic capture, STT, TTS, audio playback |
+| Config | python-dotenv | — | Load API keys from `.env` |
+
+---
+
+## Project Structure
+
+```
+LOCA/
+├── main.py                   # Entry point — wires tools, planner, executor, voice I/O
+├── test.py                   # Voice interaction smoke test
+├── test2.py                  # LangChain + Groq tool-binding smoke test
+├── user_info.txt             # Prompt-referenced memory file for user facts
+├── .env                      # API keys (Groq, Tavily, Deepgram) — never commit this
+│
+├── agent/
+│   ├── graph.py              # LOCAGraph — LangGraph StateGraph with 3 nodes
+│   ├── loop.py               # Legacy manual agent loop
+│   └── state.py              # Typed state definitions for manual loop
+│
+├── config/
+│   └── settings.py           # Runtime constants (Ollama URL, data paths)
+│
+├── execution/
+│   └── executor.py           # Dispatches exactly one LLM tool call per step
+│
+├── langchain_tools/
+│   ├── all_tools.py          # Aggregates all LangChain tool wrappers
+│   ├── browser_tools.py      # LangChain wrappers for BrowserTool
+│   ├── desktop_tools.py      # LangChain wrappers for DesktopTool
+│   ├── filesystem_tools.py   # LangChain wrappers for FileSystemTool
+│   ├── knowledge_tools.py    # LangChain wrappers for KnowledgeTool
+│   └── search_tools.py       # LangChain wrappers for SearchTool
+│
+├── llm/
+│   ├── groq_client.py        # Groq chat client initialisation
+│   ├── planner.py            # Prompt construction + tool-bound LLM call
+│   └── ollama_client.py      # Placeholder (unused)
+│
+├── observation/
+│   └── observer.py           # Thin adapter → calls tool.observe()
+│
+├── rag/
+│   ├── chunker.py            # Fixed-size overlapping text chunker
+│   ├── embedder.py           # Ollama nomic-embed-text wrapper
+│   └── qdrant_manager.py     # Local Qdrant collection: insert, search, delete
+│
+├── tools/
+│   ├── browser.py            # Playwright controller with element_id mapping
+│   ├── desktop.py            # Desktop/window/process automation
+│   ├── filesystem.py         # File and folder operations
+│   ├── knowledge.py          # Document ingestion and semantic retrieval
+│   └── search.py             # Tavily web search
+│
+├── voice/
+│   ├── manager.py            # Coordinates record → transcribe → synthesise → play
+│   ├── recorder.py           # Mic capture with silence detection
+│   ├── stt.py                # Deepgram speech-to-text client
+│   ├── tts.py                # Deepgram text-to-speech client
+│   ├── player.py             # pygame audio playback helper
+│   └── config.py             # Deepgram + recording constants
+│
