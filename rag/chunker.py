@@ -12,3 +12,17 @@ class Chunker:
 
         start = 0
 
+        while start < len(text):
+
+            end = start + self.CHUNK_SIZE
+
+            chunks.append(
+                text[start:end]
+            )
+
+            start += (
+                self.CHUNK_SIZE
+                - self.CHUNK_OVERLAP
+            )
+
+        return chunks
