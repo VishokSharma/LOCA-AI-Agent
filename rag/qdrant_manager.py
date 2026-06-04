@@ -54,3 +54,31 @@ class QdrantManager:
     chunk_text,
     embedding,
     source
+    ):
+
+        self.client.upsert(
+            collection_name=self.COLLECTION_NAME,
+            points=[
+                PointStruct(
+                    id=chunk_id,
+                    vector=embedding,
+                    payload={
+                        "text": chunk_text,
+                        "source": source
+                    }
+            )
+        ]
+    )
+    
+    def count_points(self):
+
+        return self.client.count(
+        collection_name=self.COLLECTION_NAME,
+        exact=True
+        ).count
+        
+    def search(
+    self,
+    query_embedding,
+    limit=5
+        ):
