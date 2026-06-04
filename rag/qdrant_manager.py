@@ -26,3 +26,31 @@ class QdrantManager:
         self.client.close()
         
     def create_collection(self):
+
+        collections = self.client.get_collections()
+
+        existing_collections = [
+            collection.name
+            for collection in collections.collections
+        ]
+
+        if self.COLLECTION_NAME in existing_collections:
+            return
+
+        self.client.create_collection(
+            collection_name=self.COLLECTION_NAME,
+            vectors_config=VectorParams(
+                size=self.VECTOR_SIZE,
+                distance=Distance.COSINE
+            )
+        )
+
+        print(
+            f"Created collection: {self.COLLECTION_NAME}"
+        )
+    def insert_chunk(
+    self,
+    chunk_id,
+    chunk_text,
+    embedding,
+    source
