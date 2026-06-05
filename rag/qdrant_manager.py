@@ -82,3 +82,30 @@ class QdrantManager:
     query_embedding,
     limit=5
         ):
+
+        results = self.client.query_points(
+            collection_name=self.COLLECTION_NAME,
+            query=query_embedding,
+            limit=limit
+    )
+
+        return results.points
+    
+    def delete_source(
+    self,
+    source
+):
+
+        self.client.delete(
+            collection_name=self.COLLECTION_NAME,
+            points_selector=Filter(
+                must=[
+                    FieldCondition(
+                        key="source",
+                        match=MatchValue(
+                            value=source
+                    )
+                )
+            ]
+        )
+    )
