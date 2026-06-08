@@ -39,3 +39,43 @@ class FileSystemTool:
                 "matches": matches[:20]
             }
         except Exception as e:
+            return {
+                "success": False,
+                "error": str(e)
+            }
+    
+    def list_directory(self, path):
+        try:
+            path = Path(path)
+            items = []
+            
+            for item in path.iterdir():
+                items.append({
+                    "name": item.name,
+                    "type": "folder" if item.is_dir() else "file"
+                })
+            
+            return {
+                "success": True,
+                "items": items[:20]
+            }
+        except Exception as e:
+            return {
+                "success": False,
+                "error": str(e)
+            }
+            
+    def open_file(self, path):
+
+        try:
+
+            path = str(Path(path).resolve())
+
+            os.startfile(path)
+
+            return {
+            "success": True,
+            "path": path
+            }
+
+        except Exception as e:
