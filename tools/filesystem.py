@@ -79,3 +79,43 @@ class FileSystemTool:
             }
 
         except Exception as e:
+
+            return {
+            "success": False,
+            "error": str(e)
+            }
+            
+    def create_file(self, path):
+
+        try:
+
+            Path(path).touch()
+
+            return {
+            "success": True,
+            "path": path
+            }
+
+        except Exception as e:
+
+            return {
+            "success": False,
+            "error": str(e)
+        }
+            
+            
+    def create_folder(self, path):
+
+        try:
+
+            Path(path).mkdir(
+            parents=True,
+            exist_ok=True
+        )
+
+            return {
+            "success": True,
+            "path": path
+        }
+
+        except Exception as e:
