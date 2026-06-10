@@ -119,3 +119,43 @@ class FileSystemTool:
         }
 
         except Exception as e:
+
+            return {
+            "success": False,
+            "error": str(e)
+            }
+            
+    def read_file(self, path):
+
+        try:
+
+         path = Path(path)
+
+         content = path.read_text(
+            encoding="utf-8"
+        )[:2000]
+
+         return {
+                "success": True,
+            "path": str(path),
+            "content": content
+         }
+
+        except Exception as e:
+
+            return {
+            "success": False,
+            "error": str(e)
+        }
+            
+    def write_file(self, path, content):
+
+        try:
+
+            path = Path(path)
+
+            path.write_text(
+            content,
+            encoding="utf-8"
+        )
+
