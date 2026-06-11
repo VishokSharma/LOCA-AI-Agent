@@ -159,3 +159,43 @@ class FileSystemTool:
             encoding="utf-8"
         )
 
+            return {
+            "success": True,
+            "path": str(path)
+        }
+
+        except Exception as e:
+
+            return {
+            "success": False,
+            "error": str(e)
+            }
+            
+    def append_file(
+    self,
+    path,
+    content
+):
+
+        try:
+
+            with open(
+            path,
+            "a",
+            encoding="utf-8"
+            ) as file:
+
+                file.write("\n" + content)
+
+            return {
+            "success": True,
+            "path": path,
+            "message": "Content appended successfully"
+            }
+
+        except Exception as e:
+
+            return {
+            "success": False,
+            "error": str(e)
+            }
