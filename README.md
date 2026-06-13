@@ -191,3 +191,68 @@ LOCA/
 │   ├── player.py             # pygame audio playback helper
 │   └── config.py             # Deepgram + recording constants
 │
+└── data/
+    ├── browser_data/         # Persistent Playwright Chromium profile
+    ├── qdrant/               # Local Qdrant vector storage
+    └── screenshots/          # Screenshot output directory
+```
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+| Requirement | Notes |
+|-------------|-------|
+| Windows 10/11 | Desktop automation uses `pywinauto`, `pywin32`, `os.startfile` — Linux/macOS unsupported |
+| Python 3.12.1 | Match this version exactly to avoid dependency conflicts |
+| Ollama | Must be running locally on `http://localhost:11434` for RAG embeddings |
+| Groq API key | For LLM inference — [console.groq.com](https://console.groq.com) |
+| Tavily API key | For web search — [app.tavily.com](https://app.tavily.com) |
+| Deepgram API key | For STT + TTS — [console.deepgram.com](https://console.deepgram.com) |
+| Microphone + speakers | Required for voice mode (`mode = 2`) only |
+
+### Installation
+
+**1. Clone the repository**
+```bash
+git clone https://github.com/VishokSharma/LOCA-AI-Agent.git
+cd Agent_LOCA
+```
+
+**2. Create and activate a virtual environment**
+```bash
+python -m venv venv
+venv\Scripts\activate
+```
+
+**3. Install dependencies**
+```bash
+python -m pip install `
+    python-dotenv langchain langchain-core langchain-groq langgraph groq `
+    playwright tavily-python deepgram-sdk qdrant-client ollama numpy scipy `
+    sounddevice pygame psutil pyautogui pygetwindow pywinauto pywin32
+```
+
+**4. Install Playwright browser**
+```bash
+python -m playwright install chromium
+```
+
+**5. Configure environment variables**
+```bash
+cp .env.example .env
+# then open .env and fill in your keys
+```
+
+**6. Start Ollama and pull the embedding model**
+```bash
+ollama serve
+ollama pull nomic-embed-text
+```
+
+**7. Run LOCA**
+```bash
+python main.py
+```
