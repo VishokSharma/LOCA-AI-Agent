@@ -36,3 +36,41 @@ class BrowserTool:
             return value
         return value.replace('"', '\\"')
 
+    def _build_aria_selector(self, aria_label):
+        """Build a safe aria-label selector with proper escaping."""
+        escaped = aria_label.replace('\\', '\\\\').replace('"', '\\"')
+        return f'[aria-label="{escaped}"]'
+
+    def navigate(self, url):
+        self.start_browser()
+        self.page.goto(url)
+        self.page.wait_for_load_state("networkidle")
+        
+        return {
+            "success":True,
+            "url":url
+        }
+
+    def click(self, selector=None, element_id=None):
+        self.start_browser()
+        if element_id is not None:
+            if element_id not in self.element_id_map:
+                raise ValueError(f"Element ID {element_id} not found in mapping. Available IDs: {list(self.element_id_map.keys())}")
+            selector = self.element_id_map[element_id]
+        
+        if selector is None:
+            raise ValueError("Either 'selector' or 'element_id' must be provided")
+        
+        try:
+            locator = self.page.locator(selector)
+            count = locator.count()
+            if count == 0:
+                raise Exception(f"Element not found with selector: {selector}")
+            locator.first.scroll_into_view_if_needed()
+            locator.first.click()
+            self.page.wait_for_load_state("networkidle")
+        except Exception as e:
+            raise Exception(f"Click failed for selector '{selector}': {str(e)}")
+        
+        return {
+            "success":True,
