@@ -33,3 +33,38 @@ def list_directory(path: str):
 
 
 @tool
+def open_file(path: str):
+    """
+    Open a file using the default application.
+    """
+    return filesystem.open_file(path)
+
+
+@tool
+def create_file(path: str):
+    """
+    Create a new file.
+    """
+    return filesystem.create_file(path)
+
+
+@tool
+def create_folder(path: str):
+    """
+    Create a new folder.
+    """
+    return filesystem.create_folder(path)
+
+
+@tool
+def read_file(path: str):
+    """
+    Read the contents of a file.
+    """
+    return filesystem.read_file(path)
+
+
+@tool
+def write_file(
+    path: str,
+    content: str
