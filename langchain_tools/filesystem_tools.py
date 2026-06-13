@@ -68,3 +68,38 @@ def read_file(path: str):
 def write_file(
     path: str,
     content: str
+):
+    """
+    Overwrite a file with content.
+    """
+    return filesystem.write_file(
+        path,
+        content
+    )
+
+
+@tool
+def append_file(
+    path: str,
+    content: str
+):
+    """
+    Append content to an existing file.
+    """
+    return filesystem.append_file(
+        path,
+        content
+    )
+
+
+FILESYSTEM_TOOLS = [
+    find_file,
+    find_folder,
+    list_directory,
+    open_file,
+    create_file,
+    create_folder,
+    read_file,
+    write_file,
+    append_file
+]
