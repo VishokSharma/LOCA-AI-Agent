@@ -74,3 +74,41 @@ class BrowserTool:
         
         return {
             "success":True,
+            "element_id":element_id
+        }
+
+    def type(self, selector=None, element_id=None, text=""):
+        self.start_browser()
+        if element_id is not None:
+            if element_id not in self.element_id_map:
+                raise ValueError(f"Element ID {element_id} not found in mapping. Available IDs: {list(self.element_id_map.keys())}")
+            selector = self.element_id_map[element_id]
+        
+        if selector is None:
+            raise ValueError("Either 'selector' or 'element_id' must be provided")
+        
+        try:
+            self.page.type(selector, text)
+        except Exception as e:
+            raise Exception(f"Type failed for selector '{selector}': {str(e)}")
+        
+        return {
+            "success":True,
+            "element_id":element_id
+        }
+
+    def press(self, key):
+        self.start_browser()
+        self.page.keyboard.press(key)
+        self.page.wait_for_load_state("networkidle")
+        return {
+            "success":True
+        }
+
+    def observe(self):
+        self.start_browser()
+
+        title = self.page.title()
+        url = self.page.url
+
+        text = self.page.locator("body").inner_text()
