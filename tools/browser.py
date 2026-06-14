@@ -112,3 +112,41 @@ class BrowserTool:
         url = self.page.url
 
         text = self.page.locator("body").inner_text()
+        text = text[:500]
+
+        buttons = []
+        element_id = 1
+        
+        # Reset the element ID map for this observation
+        self.element_id_map = {}
+
+        for button in self.page.locator("button").all():
+
+            button_text = button.inner_text().strip()
+
+            if button_text:
+
+                id_attr = button.get_attribute("id")
+                aria = button.get_attribute("aria-label")
+                
+                if aria:
+                    selector = self._build_aria_selector(aria)
+                elif id_attr:
+                    selector = f"#{id_attr}"
+                else:
+                    selector = f"text={button_text}"
+
+                locator = self.page.locator(selector)
+                try:
+                    visible = locator.first.is_visible()
+                except:
+                    visible = False
+                
+
+                if visible:
+                    buttons.append({
+                        "element_id": element_id,
+                        "type": "button",
+                        "text": button_text,
+                        "selector": selector
+                    })
