@@ -226,3 +226,41 @@ class BrowserTool:
                 try:
                     visible = locator.first.is_visible()
                 except:
+                    visible = False
+            
+
+                if visible:
+                    inputs.append({
+                        "element_id": element_id,
+                        "type": "input",
+                        "placeholder": placeholder,
+                        "selector": selector
+                    })
+                    # Store mapping for LLM-generated actions
+                    self.element_id_map[element_id] = selector
+                    element_id += 1
+
+            if len(inputs) >= 5:
+                break
+
+        return {
+            "title": title,
+            "url": url,
+            "buttons": buttons[:20],
+            "links": links[:20],
+            "inputs": inputs[:20]
+        }
+
+    def close(self):
+        self.start_browser()
+        if self.context:
+            try:
+                self.context.close()
+            except:
+                pass
+
+        if self.playwright:
+            try:
+                self.playwright.stop()
+            except:
+                pass
