@@ -22,3 +22,27 @@ def browser_click(element_id: int):
     Click an element using its element id.
     """
     return browser.click(element_id=element_id)
+
+
+@tool
+def browser_type_text(
+    element_id: int,
+    text: str
+):
+    """
+    Type text into an input field on browser.
+    """
+    return browser.type(
+        element_id=element_id,
+        text=text
+    )
+
+
+@tool
+def browser_press(key: str):
+    """
+    Press a keyboard key.
+    """
+    return browser.press(key)
+
+
