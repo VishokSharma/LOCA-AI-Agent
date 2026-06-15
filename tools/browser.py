@@ -150,3 +150,41 @@ class BrowserTool:
                         "text": button_text,
                         "selector": selector
                     })
+                    # Store mapping for LLM-generated actions
+                    self.element_id_map[element_id] = selector
+                    element_id += 1
+
+            if len(buttons) >= 10:
+                break
+
+        # ---------------- LINKS ----------------
+
+        links = []
+
+        for link in self.page.locator("a").all():
+
+            link_text = link.inner_text().strip()
+
+            if link_text:
+
+                id_attr = link.get_attribute("id")
+                aria = link.get_attribute("aria-label")
+
+                if id_attr:
+                    selector = f"#{id_attr}"
+                elif aria:
+                    selector = self._build_aria_selector(aria)
+                else:
+                    selector = f"text={link_text}"
+
+                # Check visibility and uniqueness
+                locator = self.page.locator(selector)
+                try:
+                    visible = locator.first.is_visible()
+                except:
+                    visible = False
+                
+                unique = (locator.count() == 1)
+
+                if visible:
+                    links.append({
