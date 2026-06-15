@@ -188,3 +188,41 @@ class BrowserTool:
 
                 if visible:
                     links.append({
+                        "element_id": element_id,
+                        "type": "link",
+                        "text": link_text,
+                        "selector": selector
+                    })
+                    # Store mapping for LLM-generated actions
+                    self.element_id_map[element_id] = selector
+                    element_id += 1
+
+            if len(links) >= 10:
+                break
+
+        # ---------------- INPUTS ----------------
+        
+        inputs = []
+
+        for inp in self.page.locator("input").all():
+
+            placeholder = inp.get_attribute("placeholder")
+
+            if placeholder:
+
+                id_attr = inp.get_attribute("id")
+                aria = inp.get_attribute("aria-label")
+
+                if id_attr:
+                    selector = f"#{id_attr}"
+                elif aria:
+                    selector = self._build_aria_selector(aria)
+                else:
+                    selector = f'input[placeholder="{placeholder}"]'
+
+                # Check visibility and uniqueness
+                print(f"[DEBUG SELECTOR] {selector}")
+                locator = self.page.locator(selector)
+                try:
+                    visible = locator.first.is_visible()
+                except:
