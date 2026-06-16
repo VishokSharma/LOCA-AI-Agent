@@ -46,3 +46,27 @@ def browser_press(key: str):
     return browser.press(key)
 
 
+@tool
+def browser_observe():
+    """
+    Observe the current webpage and return page information.
+    """
+    return browser.observe()
+
+
+@tool
+def browser_close_browser():
+    """
+    Close the browser.
+    """
+    return browser.close()
+
+
+BROWSER_TOOLS = [
+    browser_navigate,
+    browser_click,
+    browser_type_text,
+    browser_press,
+    browser_observe,
+    browser_close_browser
+]
