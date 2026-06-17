@@ -14,3 +14,18 @@ class SearchTool:
 
     def search(self, query):
 
+        try:
+
+            response = self.client.search(
+                query=query,
+                search_depth="basic",
+                max_results=2
+            )
+
+            sources = []
+
+            for result in response.get("results", []):
+
+                sources.append({
+                    "title": result.get("title"),
+                    "content": result.get("content")
