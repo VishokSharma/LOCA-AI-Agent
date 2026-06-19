@@ -29,3 +29,18 @@ class SearchTool:
                 sources.append({
                     "title": result.get("title"),
                     "content": result.get("content")
+                })
+
+            return {
+                "success": True,
+                "query": query,
+                "answer": response.get("answer", ""),
+                "sources": sources
+            }
+
+        except Exception as e:
+
+            return {
+                "success": False,
+                "error": str(e)
+            }
