@@ -31,3 +31,36 @@ class KnowledgeTool:
             path.name
             )
             for chunk in chunks:
+
+                embedding = self.embedder.embed(
+                    chunk
+                )
+
+                self.qdrant.insert_chunk(
+                    chunk_id=str(uuid4()),
+                    chunk_text=chunk,
+                    embedding=embedding,
+                    source=path.name
+                )
+
+            return {
+                "success": True,
+                "file": path.name,
+                "chunks_added": len(chunks)
+            }
+
+        except Exception as e:
+
+            return {
+                "success": False,
+                "error": str(e)
+            }
+            
+    def retrieve(
+    self,
+    question,
+    limit=5
+):
+
+        try:
+
