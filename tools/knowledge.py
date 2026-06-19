@@ -64,3 +64,35 @@ class KnowledgeTool:
 
         try:
 
+            query_embedding = self.embedder.embed(
+            question
+            )
+
+            results = self.qdrant.search(
+            query_embedding,
+            limit
+            )
+            print(results)
+
+            chunks = []
+
+            for result in results:
+
+                chunks.append({
+                "score": result.score,
+                "text": result.payload["text"],
+                "source": result.payload["source"]
+                })
+
+            return {
+            "success": True,
+            "question": question,
+            "chunks": chunks
+            }
+
+        except Exception as e:
+
+            return {
+            "success": False,
+            "error": str(e)
+        }
