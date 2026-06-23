@@ -81,3 +81,45 @@ class DesktopTool:
                         "success": True,
                         "window": window.title
                     }
+
+                except Exception as e:
+
+                    return {
+                        "success": False,
+                        "error": str(e)
+                    }
+
+        return {
+            "success": False,
+            "error": "Window not found"
+        }
+
+    def open_app(self, app_name):
+
+        try:
+
+            pyautogui.press("win")
+
+            time.sleep(1)
+
+            pyautogui.write(
+                app_name,
+                interval=0.03
+            )
+
+            time.sleep(1)
+
+            pyautogui.press("enter")
+
+            return {
+                "success": True,
+                "app": app_name
+            }
+
+        except Exception as e:
+
+            return {
+                "success": False,
+                "error": str(e)
+            }
+
