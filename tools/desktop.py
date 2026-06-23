@@ -40,3 +40,44 @@ class DesktopTool:
         windows = []
 
         IGNORE = {
+            "",
+            "Program Manager",
+            "Windows Input Experience"
+        }
+
+        for window in gw.getAllWindows():
+
+            title = window.title.strip()
+
+            if not title:
+                continue
+
+            if title in IGNORE:
+                continue
+
+            windows.append(title)
+
+        return {
+            "success": True,
+            "windows": windows
+        }
+
+    def switch_window(self, target):
+
+        target = target.lower()
+
+        for window in gw.getAllWindows():
+
+            if not window.title:
+                continue
+
+            if target in window.title.lower():
+
+                try:
+
+                    window.activate()
+
+                    return {
+                        "success": True,
+                        "window": window.title
+                    }
