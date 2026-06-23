@@ -123,3 +123,44 @@ class DesktopTool:
                 "error": str(e)
             }
 
+    def close_app(self, app_name):
+
+        target = f"{app_name.lower()}.exe"
+
+        killed = 0
+
+        for proc in psutil.process_iter(
+            ["pid", "name"]
+        ):
+
+            try:
+
+                process_name = proc.info["name"]
+
+                if not process_name:
+                    continue
+
+                if process_name.lower() == target:
+
+                    proc.kill()
+                    killed += 1
+
+            except (
+                psutil.NoSuchProcess,
+                psutil.AccessDenied,
+                psutil.ZombieProcess
+            ):
+                continue
+
+        return {
+            "success": True,
+            "killed": killed
+}
+
+    def type_text(self, text):
+
+        try:
+
+            pyautogui.write(
+                text,
+                interval=0.03
