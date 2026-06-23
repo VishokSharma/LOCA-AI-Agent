@@ -164,3 +164,45 @@ class DesktopTool:
             pyautogui.write(
                 text,
                 interval=0.03
+            )
+
+            return {
+                "success": True,
+                "text": text
+            }
+
+        except Exception as e:
+
+            return {
+                "success": False,
+                "error": str(e)
+            }
+
+    def press_key(self, key):
+
+        try:
+
+            pyautogui.press(key)
+
+            return {
+                "success": True,
+                "key": key
+            }
+
+        except Exception as e:
+
+            return {
+                "success": False,
+                "error": str(e)
+            }
+
+    def hotkey(self, *keys):
+
+        try:
+
+            pyautogui.hotkey(*keys)
+
+            return {
+                "success": True,
+                "keys": list(keys)
+            }
