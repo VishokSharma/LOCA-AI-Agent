@@ -247,3 +247,44 @@ class DesktopTool:
 
                 name = child.window_text().strip()
 
+                if not name:
+                    continue
+
+                control_type = (
+                    child.element_info.control_type
+                )
+
+                if control_type == "Button":
+
+                    buttons.append(name)
+
+                elif control_type == "MenuItem":
+
+                    menus.append(name)
+
+                elif control_type in [
+                    "Text",
+                    "Document"
+                ]:
+
+                    texts.append(name)
+
+            except:
+                pass
+
+        return {
+            "buttons": buttons,
+            "menus": menus,
+            "texts": texts
+        }
+        
+    def inspect_active_window(self):
+
+        active = self.get_active_window()
+
+        if not active["success"]:
+            return active
+
+        return self.inspect_window(
+            active["title"]
+        )
