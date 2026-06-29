@@ -33,3 +33,38 @@ def switch_window(target: str):
 
 
 @tool
+def get_active_window():
+    """
+    Get the currently active window.
+    """
+    return desktop.get_active_window()
+
+
+@tool
+def list_open_apps():
+    """
+    List all currently open windows.
+    """
+    return desktop.list_open_apps()
+
+
+@tool
+def type_text(text: str):
+    """
+    Type text into the active window.
+    """
+    return desktop.type_text(text)
+
+
+@tool
+def press_key(key: str):
+    """
+    Press a keyboard key.
+    """
+    return desktop.press_key(key)
+
+
+@tool
+def hotkey(keys: list[str]):
+    """
+    Press a keyboard shortcut.
