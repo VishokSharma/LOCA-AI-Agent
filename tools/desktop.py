@@ -206,3 +206,44 @@ class DesktopTool:
                 "success": True,
                 "keys": list(keys)
             }
+
+        except Exception as e:
+
+            return {
+                "success": False,
+                "error": str(e)
+            }
+
+    def observe(self):
+
+        active = self.get_active_window()
+
+        windows = self.list_open_apps()
+
+        return {
+
+            "active_window":
+                active.get("title"),
+
+            "open_windows":
+                windows.get("windows", [])
+        }
+        
+    def inspect_window(self, window_name):
+
+        window = Desktop(
+            backend="uia"
+        ).window(
+            title_re=f".*{window_name}.*"
+        )
+
+        buttons = []
+        menus = []
+        texts = []
+
+        for child in window.descendants():
+
+            try:
+
+                name = child.window_text().strip()
+
