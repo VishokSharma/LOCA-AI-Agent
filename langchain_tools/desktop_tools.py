@@ -68,3 +68,37 @@ def press_key(key: str):
 def hotkey(keys: list[str]):
     """
     Press a keyboard shortcut.
+    Example:
+    ['ctrl', 's']
+    """
+    return desktop.hotkey(*keys)
+
+
+@tool
+def observe_desktop():
+    """
+    Observe desktop state.
+    """
+    return desktop.observe()
+
+
+@tool
+def inspect_active_window():
+    """
+    Inspect controls of active window.
+    """
+    return desktop.inspect_active_window()
+
+
+DESKTOP_TOOLS = [
+    open_app,
+    close_app,
+    switch_window,
+    get_active_window,
+    list_open_apps,
+    type_text,
+    press_key,
+    hotkey,
+    observe_desktop,
+    inspect_active_window
+]
