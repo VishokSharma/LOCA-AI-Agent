@@ -256,3 +256,67 @@ ollama pull nomic-embed-text
 ```bash
 python main.py
 ```
+
+> **Input mode:** By default `main.py` uses voice input (`mode = 2`). Change `mode = 1` in `main.py` for keyboard input.
+
+---
+
+## Environment Variables
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `GROQ_API_KEY` | ✅ Yes | — | Used by `llm/groq_client.py` to initialise the Groq chat model for all planning calls |
+| `TAVILY_API_KEY` | ✅ Yes | — | Used by `tools/search.py` to run web searches via Tavily |
+| `DEEPGRAM_API_KEY` | ✅ Yes | — | Used by `voice/stt.py` (transcription) and `voice/tts.py` (synthesis) |
+
+> All three keys are mandatory. The agent will fail to start if any are missing from `.env`.
+
+---
+
+## API Reference
+
+LOCA does not expose an HTTP API. The public surface is the Python class and function set below.
+
+### Core Orchestration
+
+| Class / Function | Parameters | Returns | Description |
+|-----------------|-----------|---------|-------------|
+| `main.main()` | — | None | Builds tool instances, wires `LOCAGraph`, runs the interactive loop |
+| `LOCAGraph(planner, executor, tools)` | `planner`, `executor`, `tools` | `LOCAGraph` | Compiles the LangGraph `StateGraph` |
+| `LOCAGraph.run(goal)` | `goal: str` | `dict` (final graph state) | Initialises `GraphState` and invokes the compiled graph |
+| `Planner.plan(state)` | `state: GraphState` | LLM response object | Renders prompt, binds tools, calls Groq model |
+| `Executor.execute(response)` | `response` with `tool_calls` | tool result or `None` | Dispatches exactly one tool call; rejects multi-action responses |
+
+### Browser Tool · `tools/browser.py`
+
+| Method | Parameters | Returns | Description |
+|--------|-----------|---------|-------------|
+| `BrowserTool.navigate(url)` | `url: str` | `dict` | Opens a URL in the persistent Playwright context |
+| `BrowserTool.click(selector, element_id)` | selector or `element_id: int` | `dict` | Clicks a visible element by selector or observation-time `element_id` |
+| `BrowserTool.type(selector, element_id, text)` | selector or `element_id`, `text: str` | `dict` | Types into a browser element |
+| `BrowserTool.press(key)` | `key: str` | `dict` | Sends a keyboard key to the active page |
+| `BrowserTool.observe()` | — | `dict` | Returns page title, URL, and visible elements with `element_id` mappings |
+| `BrowserTool.close()` | — | `dict` | Closes the Playwright context |
+
+### Desktop Tool · `tools/desktop.py`
+
+| Method | Parameters | Returns | Description |
+|--------|-----------|---------|-------------|
+| `DesktopTool.open_app(app_name)` | `app_name: str` | `dict` | Launches an app via the Windows Start menu |
+| `DesktopTool.close_app(app_name)` | `app_name: str` | `dict` | Kills matching `*.exe` processes |
+| `DesktopTool.switch_window(target)` | `target: str` | `dict` | Activates the first window whose title contains `target` |
+| `DesktopTool.list_open_apps()` | — | `dict` | Returns current open window titles |
+| `DesktopTool.type_text(text)` | `text: str` | `dict` | Types into the active window |
+| `DesktopTool.press_key(key)` | `key: str` | `dict` | Sends a key press to the active window |
+| `DesktopTool.hotkey(keys)` | `keys: list[str]` | `dict` | Sends a keyboard shortcut |
+| `DesktopTool.observe()` | — | `dict` | Returns active window title and open-window list |
+
+### Filesystem Tool · `tools/filesystem.py`
+
+| Method | Parameters | Returns | Description |
+|--------|-----------|---------|-------------|
+| `FileSystemTool.find_file(filename)` | `filename: str` | `dict` | Recursively searches `Path.home()` for matching files |
+| `FileSystemTool.find_folder(folder_name)` | `folder_name: str` | `dict` | Recursively searches `Path.home()` for matching folders |
+| `FileSystemTool.list_directory(path)` | `path: str` | `dict` | Lists directory contents |
+| `FileSystemTool.read_file(path)` | `path: str` | `dict` | Reads up to 2000 characters from a file |
+| `FileSystemTool.write_file(path, content)` | `path: str`, `content: str` | `dict` | Overwrites a file |
