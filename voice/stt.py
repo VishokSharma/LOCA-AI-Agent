@@ -14,3 +14,18 @@ class SpeechToText:
             api_key=os.getenv("DEEPGRAM_API_KEY")
         )
 
+    def transcribe(
+        self,
+        audio_path: str
+    ) -> str:
+
+        with open(audio_path, "rb") as f:
+            audio = f.read()
+
+        response = (
+            self.client
+            .listen
+            .v1
+            .media
+            .transcribe_file(
+                request=audio,
