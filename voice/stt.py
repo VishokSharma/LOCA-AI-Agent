@@ -29,3 +29,18 @@ class SpeechToText:
             .media
             .transcribe_file(
                 request=audio,
+                model="nova-3",
+                language="en",
+                smart_format=True,
+                punctuate=True
+            )
+        )
+
+        transcript = (
+            response.results
+            .channels[0]
+            .alternatives[0]
+            .transcript
+        )
+
+        return transcript.strip()
