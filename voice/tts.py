@@ -26,3 +26,16 @@ class TextToSpeech:
             .v1
             .audio
             .generate(
+                text=text,
+                model="aura-2-asteria-en",
+                encoding="mp3"
+            )
+        )
+
+        with open(output_file, "wb") as f:
+
+            for chunk in audio:
+
+                f.write(chunk)
+
+        return output_file
