@@ -31,3 +31,36 @@ class Recorder:
         print("\n🎤 Recording...")
         self.recording = True
 
+        self.audio = []
+
+        def callback(indata, frames, time_info, status):
+
+            if status:
+                print(status)
+
+            if self.recording:
+                self.audio.append(indata.copy())
+
+        start_time = time.time()
+
+        with sd.InputStream(
+
+            samplerate=SAMPLE_RATE,
+
+            channels=CHANNELS,
+
+            dtype="int16",
+
+            blocksize=CHUNK_SIZE,
+
+            callback=callback
+
+        ):
+
+            # Compute how many chunks correspond to silence and minimum recording
+            chunk_duration = CHUNK_SIZE / float(SAMPLE_RATE)
+            silence_chunks_needed = max(1, int(SILENCE_DURATION / chunk_duration))
+            min_chunks = max(1, int(MIN_RECORD_SECONDS / chunk_duration))
+
+            while True:
+                time.sleep(0.1)
