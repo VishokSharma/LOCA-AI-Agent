@@ -15,3 +15,19 @@ class VoiceManager:
         self.stt = SpeechToText()
 
         self.tts = TextToSpeech()
+
+        self.player = AudioPlayer()
+
+    def listen(self) -> str:
+
+        audio_path = self.recorder.record()
+
+        if not audio_path:
+            return ""
+
+        text = self.stt.transcribe(audio_path)
+
+        if os.path.exists(audio_path):
+            os.remove(audio_path)
+
+        return text
