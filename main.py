@@ -38,3 +38,42 @@ load_dotenv()
 # =====================================================
 # REAL TOOLS
 # =====================================================
+
+search = SearchTool()
+knowledge = KnowledgeTool()
+browser = BrowserTool()
+desktop = DesktopTool()
+fileSystem = FileSystemTool()
+voice = manager.VoiceManager()
+
+
+# =====================================================
+# CONNECT REAL TOOLS TO LANGCHAIN WRAPPERS
+# =====================================================
+
+set_filesystem_tool(
+    fileSystem
+)
+
+set_knowledge_tool(
+    knowledge
+)
+
+set_search_tool(
+    search
+)
+
+set_browser_tool(
+    browser
+)
+
+set_desktop_tool(
+    desktop
+)
+
+
+# =====================================================
+# MAIN
+# =====================================================
+mode =2
+
