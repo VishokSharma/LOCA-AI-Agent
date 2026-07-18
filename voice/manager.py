@@ -31,3 +31,19 @@ class VoiceManager:
             os.remove(audio_path)
 
         return text
+
+    def speak(
+        self,
+        text: str
+    ):
+
+        audio_path = self.tts.synthesize(
+            text
+        )
+
+        self.player.play(
+            audio_path
+        )
+
+        if os.path.exists(audio_path):
+            os.remove(audio_path)
