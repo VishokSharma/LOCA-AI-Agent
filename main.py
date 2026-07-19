@@ -77,3 +77,43 @@ set_desktop_tool(
 # =====================================================
 mode =2
 
+def get_goal() -> str:
+    # mode is hardcoded as an integer (2) above
+    if mode == 1:
+        return input("Goal: ").strip()
+
+    if mode == 2:
+        return voice.listen().strip()
+
+   
+    return ""
+
+
+def speak_final_completion(state):
+
+    response = state.get("response") if isinstance(state, dict) else None
+
+    if not response:
+        return
+
+    final_text = getattr(
+        response,
+        "content",
+        ""
+    )
+
+    if final_text:
+        voice.speak(final_text)
+
+def main():
+
+    
+
+    tools = {
+        "browser": browser,
+        "desktop": desktop,
+        "filesystem": fileSystem,
+        "search": search,
+        "knowledge": knowledge
+    }
+
