@@ -117,3 +117,42 @@ def main():
         "knowledge": knowledge
     }
 
+    llm = GroqClient(
+        api_key=os.getenv("GROQ_API_KEY")
+    )
+
+    planner = Planner(
+        llm
+    )
+
+    executor = Executor(
+        ALL_TOOLS
+    )
+
+
+    graph = LocaGraph(
+    planner,
+    executor,
+    tools
+)
+    
+    while True:
+        goal = get_goal()
+
+        if not goal:
+            continue
+
+        if goal.lower() == "exit":
+            break
+
+        final_state = graph.run(goal)
+
+        speak_final_completion(final_state)
+
+    input(
+        "\nPress Enter to close browser..."
+    )
+
+
+if __name__ == "__main__":
+    main()
