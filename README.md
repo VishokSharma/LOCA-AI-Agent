@@ -320,3 +320,67 @@ LOCA does not expose an HTTP API. The public surface is the Python class and fun
 | `FileSystemTool.list_directory(path)` | `path: str` | `dict` | Lists directory contents |
 | `FileSystemTool.read_file(path)` | `path: str` | `dict` | Reads up to 2000 characters from a file |
 | `FileSystemTool.write_file(path, content)` | `path: str`, `content: str` | `dict` | Overwrites a file |
+| `FileSystemTool.append_file(path, content)` | `path: str`, `content: str` | `dict` | Appends to an existing file |
+| `FileSystemTool.create_file(path)` | `path: str` | `dict` | Creates an empty file |
+| `FileSystemTool.create_folder(path)` | `path: str` | `dict` | Creates a directory tree |
+| `FileSystemTool.open_file(path)` | `path: str` | `dict` | Opens a file with the default Windows app |
+
+### Knowledge Tool · `tools/knowledge.py`
+
+| Method | Parameters | Returns | Description |
+|--------|-----------|---------|-------------|
+| `KnowledgeTool.add_document(path)` | `path: str` | `dict` | Chunks, embeds, and stores a document in Qdrant |
+| `KnowledgeTool.retrieve(question, limit)` | `question: str`, `limit: int = 5` | `dict` | Retrieves the most semantically relevant chunks |
+
+### Search & Voice
+
+| Method | Parameters | Returns | Description |
+|--------|-----------|---------|-------------|
+| `SearchTool.search(query)` | `query: str` | `dict` | Tavily web search — answer + source summaries |
+| `VoiceManager.listen()` | — | `str` | Records audio, transcribes, deletes temp WAV, returns text |
+| `VoiceManager.speak(text)` | `text: str` | None | Synthesises + plays speech, deletes generated MP3 |
+
+### RAG Components · `rag/`
+
+| Class / Method | Parameters | Returns | Description |
+|---------------|-----------|---------|-------------|
+| `Chunker.chunk_text(text)` | `text: str` | `list[str]` | Fixed-size overlapping chunks |
+| `Embedder.embed(text)` | `text: str` | `list[float]` | Calls `ollama.embeddings()` with `nomic-embed-text` |
+| `QdrantManager.create_collection()` | — | None | Creates `knowledge_base` collection if absent |
+| `QdrantManager.insert_chunk(...)` | `chunk_id`, `chunk_text`, `embedding`, `source` | None | Inserts a vector + payload into Qdrant |
+| `QdrantManager.search(query_embedding, limit)` | `query_embedding`, `limit: int = 5` | `list` | Queries the local Qdrant collection |
+| `QdrantManager.delete_source(source)` | `source: str` | None | Deletes all chunks for a source before re-ingestion |
+
+---
+
+## How It Works
+
+1. **Startup** — `main.py` loads `.env`, instantiates all tool objects, connects them to LangChain wrappers, and builds a `GroqClient` + `Planner` / `Executor` pair.
+
+2. **Input** — `get_goal()` either reads a string from `input()` (mode 1) or records audio via `Recorder`, transcribes with `SpeechToText`, and returns the goal string (mode 2).
+
+3. **Planning** — `planner_node` calls `Planner.plan(state)`, which formats a prompt from `goal`, `history`, and `observation`, then invokes `ChatGroq` with all tools bound. The LLM returns a response with `tool_calls`.
+
+4. **Execution** — `tool_node` calls `Executor.execute(response)`, which enforces a single tool call per step and dispatches it through `tool.invoke()`. Multi-action responses are rejected outright.
+
+5. **Observation** — `observe_node` calls `tool.observe()` on browser or desktop to refresh the current UI state, appending the result to `GraphState.history` so the next planning step is grounded.
+
+6. **Completion** — when the LLM returns no `tool_calls`, the loop exits and `speak_final_completion()` passes the result through `VoiceManager.speak()` for audio output.
+
+---
+
+## Contributing
+
+1. Fork the repository and create a feature branch
+```bash
+git checkout -b feature/your-feature
+```
+2. Make focused changes that preserve the agent loop and tool contracts
+3. Run the relevant smoke test (`test.py` for voice, `test2.py` for tool binding)
+4. Commit with a descriptive message
+```bash
+git commit -m "feat: describe what you changed"
+```
+5. Push and open a pull request against `main`
+
+No formatter config is checked in — follow the existing code style in whatever files you touch and keep changes small and explicit.
